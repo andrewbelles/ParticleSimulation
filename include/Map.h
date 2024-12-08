@@ -42,7 +42,7 @@ int
 overlapHelper(Map *map[], const Grid grid[], Object *obj, Short3 Indices,
               int gridIndex, int n_axis, Short3 *dir);
 int
-insertNode(Map *map[], Object *curr, int gridIndex, char type);
+insertNode(Map *map[], Object *curr, int gridIndex);
 
 int
 gridIndexCalc(Short3 Indices, int n_axis);
@@ -62,6 +62,7 @@ void
 print_map(Map *map[], const int size);
 
 Map **
-createMap(Object *head, const Cube cube, const int n_partitions, int *mapStatus);
+createMap(Object *head, const Cube cube, int n_partitions,
+          int *mapStatus);
 
 #endif // MAP_H

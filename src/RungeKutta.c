@@ -114,7 +114,7 @@ handleUpdate(Object *object)
 Vector3
 physics(Vector3 position, Vector3 velocity)
 {
-  double path_radius = 20.0, gravity = 9.81;    // System defn
+  double path_radius = 5.0, gravity = 9.81;    // System defn
   double ax, ay, az;
   Vector3 unit = unit_direction(position);   // Unit vector
   az = -gravity;

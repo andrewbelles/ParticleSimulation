@@ -17,12 +17,12 @@ createMap(Object *head, const Cube cube, int n_partitions, int *mapStatus)
   // Object 
   while (curr != NULL) {
     status = objProcessHelper(map, grid, curr, cube.size, n_axis);
-    if (status == 1) {   // Early exit due to insertion error
+    if (status == 1 && !OVERRIDE) {   // Early exit due to insertion error
       (*mapStatus) = 1;
       (void)destroy_map(map, size);
       free(grid);
       return NULL; 
-    } else if (status == 2) {
+    } else if (status == 2 && !OVERRIDE) {
       (*mapStatus) = 2;
       (void)destroy_map(map, size);
       free(grid);
@@ -84,22 +84,22 @@ objProcessHelper(Map *map[], const Grid grid[], Object *obj,
   gridIndex = gridIndexCalc(Indices, n_axis);
 
   // Insert absolute position of particle into node
-  if (insertNode(map, obj, gridIndex, 'N')) {
+  if (insertNode(map, obj, gridIndex)) {
     return 1; // Insertion Failure 
   }
 
   // Call helper function to determine if overlapping other cubes/boundaries
   overlapStatus = overlapHelper(map, grid, obj, Indices, gridIndex, n_axis, &dir);
-  if (overlapStatus == 1) {
+  if (overlapStatus == 1 && !OVERRIDE) {
     return 1;   // Insertion Failure ^^
-  } else if (overlapStatus == 3) {
+  } else if (overlapStatus == 3 && !OVERRIDE) {
     return 2;
   }
 
   crossStatus = crossHelper(map, grid, obj, Indices, gridIndex, n_axis, dir);
-  if (crossStatus == 2) { // Insertion Failure
+  if (crossStatus == 2 && !OVERRIDE) { // Insertion Failure
     return 1;
-  } else if (crossStatus == 3) {
+  } else if (crossStatus == 3 && !OVERRIDE) {
 
   }
   // Checks overlap from corner adjacent cubes
@@ -115,13 +115,12 @@ gridIndexCalc(Short3 Indices, int n_axis)
 
 // Takes grid and hash Indices for current object and places the object where the indices specify
 int
-insertNode(Map *map[], Object *obj, int gridIndex, char type)
+insertNode(Map *map[], Object *obj, int gridIndex)
 {
   Map *curr = map[gridIndex], *new = NULL;
   // Create new map object
   new = (Map*)safe_malloc(sizeof(Map));
   // Set object to current
-  new->type = type;
   new->object = obj; 
   new->next = NULL;
   new->wall = (Short3){0, 0, 0};
@@ -132,7 +131,7 @@ insertNode(Map *map[], Object *obj, int gridIndex, char type)
     map[gridIndex] = new;
   // If not empty advance
   } else {
-    if (curr->count >= 2) {    // If bucket exceeds acceptable number of particles
+    if (curr->count >= 2 && !OVERRIDE) {    // If bucket exceeds acceptable number of particles
       free(new);
       return 1;
     }
@@ -246,7 +245,7 @@ overlapHelper(Map *map[], const Grid grid[], Object *a, const Short3 indices,
     // Calculate grid index and insert if does overlap (passes checks)
     gridIndex = gridIndexCalc(indicesFromArray(indices_cpy), n_axis);
     
-    if (insertNode(map, a, gridIndex, 'O')) {
+    if (insertNode(map, a, gridIndex)) {
       status = 1;
       free(indices_array);
       free(min);
@@ -262,7 +261,6 @@ overlapHelper(Map *map[], const Grid grid[], Object *a, const Short3 indices,
   // If any index is outside the valid range. 
   if (((*dir).x > 1 || (*dir).x < -1) || ((*dir).y > 1 || (*dir).y < -1) || ((*dir).z > 1 || (*dir).z < -1)) {
     status = 3;
-    return status;
   }
 
   free(indices_array);
@@ -336,7 +334,7 @@ crossHelper(Map *map[], const Grid grid[], Object *a, Short3 indices,
     current_indices = indicesFromArray(combination);
     crossGrid = gridIndexCalc(current_indices, n_axis);
 
-    if (insertNode(map, a, crossGrid, 'C') == 1) {
+    if (insertNode(map, a, crossGrid) == 1) {
       return 2;                                         // Insertion failure
     }
   }
@@ -365,7 +363,7 @@ crossHelper(Map *map[], const Grid grid[], Object *a, Short3 indices,
   current_indices = indicesFromArray(crossIndex);
   crossGrid = gridIndexCalc(current_indices, n_axis);
 
-  if (insertNode(map, a, crossGrid, 'C') == 1) {
+  if (insertNode(map, a, crossGrid) == 1) {
     return 2;
   }
   return 0;                                             // Successful insertion

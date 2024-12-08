@@ -2,19 +2,17 @@
 
 int
 collisionCall(int debug, Map **map[], const Cube cube, Object *head,
-              int *n_partitions, int iter, int *buckets, int *large_partition)
+              int *n_partitions, int iter, int *large_partition)
 {
   int map_size = 0, i, attempts = 0, mapStatus = 0; 
   // Current node in map and objects to compare
   Map *curr;
   Object *a, *b;
-  char *affected;
 
   // Dynamically resize if necessary to ensure each cube only has two particles
   if (iter == 0) {
     (*map) = createMap(head, cube, (*n_partitions), &mapStatus);     // 8 is the minimum number of partitions
     (*n_partitions) = 8;
-    (*buckets) = (int)(cbrt(*n_partitions));
   }
 
   if (mapStatus == 1 || iter != 0) { // If not first or status from first failed 
@@ -32,22 +30,21 @@ collisionCall(int debug, Map **map[], const Cube cube, Object *head,
 
       // If gridIndex fails mapStatus(2)
       if (mapStatus == 2) {
-        affected = print_ObjectError(head, cube.size, (*buckets), (*n_partitions));
-        printf("\nError at %s. %d partitions\n", affected, (*n_partitions));
+        printf("\nError at %d partitions\n", (*n_partitions));
         return 2;
       }
       
-    } while (mapStatus != 0 && attempts < 40);
+    } while (mapStatus != 0 && attempts < ATTEMPT_CAP);
 
     // Processes statuses and attempt failure
     if (debug == 1) printf("\n");
-    if (attempts == 40) {
+    if (attempts == ATTEMPT_CAP) {
       fprintf(stderr, "Failure to create valid map with %d partitions after %d attempts\n",
               *n_partitions, attempts);
       return 1;   // Map failure
     } else if (mapStatus == 2) {
       return 1;   // Memory Failure
-    } else if (attempts > 20) {
+    } else if (attempts > 10) {
       *large_partition = 1;
     }
   }

@@ -28,7 +28,7 @@ handleWall(Object *a, Short3 wall);
 
 int
 collisionCall(int debug, Map **map[], const Cube cube, Object *head,
-              int *n_partitions, int iter, int *buckets, int *large_partition);
+              int *n_partitions, int iter, int *large_partition);
 
 char *
 print_ObjectError(Object *head, const int side_len, const int n_axis,

@@ -8,6 +8,10 @@ OBJ = $(SRC:.c=.o)
 
 EXEC = particlesim
 
+BENCH_SRC = python_integration/benchmark_funcs.c src/Geometry.c src/RungeKutta.c src/Map.c src/Collision.c
+
+BENCH_SO = python_integration/benchmark.so
+
 all: $(EXEC)
 
 $(EXEC): $(OBJ)
@@ -16,7 +20,11 @@ $(EXEC): $(OBJ)
 src/%.o: src/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-clean:
-	rm -f $(OBJ) $(EXEC)
+benchmark: $(BENCH_SRC)
+	$(CC) -shared -o $(BENCH_SO) $(BENCH_SRC) 
+	python python_integration/benchmark.py
 
-.PHONY: all clean
+clean:
+	del /F /Q src\*.o $(EXEC).exe python_integration\*.so
+
+.PHONY: all clean benchmark
