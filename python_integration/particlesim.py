@@ -1,8 +1,3 @@
-#createCube((Vector3){0.0, 0.0, 0.0}, (Vector3){0.0, 0.0, 0.0}, (Vector3){10.0, 10.0, 10.0}, 10.0);
-#
-#
-#
-
 # Imports
 import ctypes as ct
 import argparse
