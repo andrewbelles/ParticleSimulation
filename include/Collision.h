@@ -1,7 +1,6 @@
 #ifndef COLLISION_H
 #define COLLISION_H
 
-
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -11,27 +10,33 @@
 #include "RungeKutta.h"
 #include "Map.h"
 
+/* Function pointer to help collisionCall create Maps more elegantly */
+typedef Map **
+(*instantiateMapFunc)(Map *map[], const Cube cube, Object *head,
+               int *n_partitions, int iter, int max_n, int *n_maps);
+
+/* Returns either a larger map than previous or returns the same map if it
+   is still adequately large */
+Map **
+instantiateMap(Map *map[], const Cube cube, Object *head,
+               int *n_partitions, int iter, int max_n, int *n_maps);
+
+/* Handles a single collision update for a time step*/
+Map **
+collisionCall(Map *map[], const Cube cube, Object *head, 
+              int *n_partitions, int iter, int max_n, int *n_maps,
+              instantiateMapFunc __initMap, int *collisionStatus);
+
+// Gives next perfect cube value
 int
 nextCube(int prev_n_cb);
 
-int
-is_Wall(Map *curr);
+// Rectifies velocity if converging to wall and inside tol
+void
+handleWall(Object *a);
 
-int
-is_Colliding(Object *a, Object *b);
-
+// Rectifies velocity of two converging particles inside tol
 void
 handleCollision(Object *a, Object *b);
-
-void
-handleWall(Object *a, Short3 wall);
-
-int
-collisionCall(int debug, Map **map[], const Cube cube, Object *head,
-              int *n_partitions, int iter, int *large_partition);
-
-char *
-print_ObjectError(Object *head, const int side_len, const int n_axis,
-                  const int map_size);
 
 #endif // COLLISION_H

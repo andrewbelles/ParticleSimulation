@@ -30,24 +30,39 @@ typedef struct {
   double size; 
 } Cube;
 
+// Custom malloc with error handling to reduce debug if statements
 void*
 safe_malloc(size_t size);
 
+// boolean is or isn't a perfect cube
+int
+is_Cubic(int num);
+
+// Finds the maximum size of a partition to ensure doesn't 'constrict' particle
+int
+mapSize(double max_radius, double cube_size);
+
+// boolean is or isn't prime
 int
 is_prime(const int num);
 
+// quake 3 q_rqrt
 float
 Q_rsqrt(float number);
 
+// Normalizes vectors using q3 
 Vector3
 Q_normalize(Vector3 a);
 
+// Returns a random value between 2.5 and 5
 double
 randomPosition();
 
+// Returns a vector3 of 3 randomPosition()'s
 Vector3
 randomVector();
 
+// Vector operations
 Vector3
 addVectors(Vector3 a, const Vector3 b);
 
@@ -72,6 +87,7 @@ dotProduct(const Vector3 aT, const Vector3 b);
 double
 magnitude(Vector3 vector);
 
+// Creates cube from initial conditions
 Cube
 createCube(Vector3 __origin, Vector3 __min, Vector3 __max, double __size);
 
