@@ -1,122 +1,141 @@
 #include "../include/Collision.h"
 
-int
-collisionCall(int debug, Map **map[], const Cube cube, Object *head,
-              int *n_partitions, int iter, int *large_partition)
+Map **
+instantiateMap(Map *map[], const Cube cube, Object *head,
+               int *n_partitions, int iter, int max_n, int *n_maps)
 {
-  int map_size = 0, i, attempts = 0, mapStatus = 0; 
-  // Current node in map and objects to compare
-  Map *curr;
-  Object *a, *b;
+  int mapStatus = 0, attempts = 0;
 
-  // Dynamically resize if necessary to ensure each cube only has two particles
   if (iter == 0) {
-    (*map) = createMap(head, cube, (*n_partitions), &mapStatus);     // 8 is the minimum number of partitions
+    map = createMap(map, head, cube, (*n_partitions), &mapStatus);
     (*n_partitions) = 8;
   }
-
+  
   if (mapStatus == 1 || iter != 0) { // If not first or status from first failed 
-    
-    if (mapStatus == 1 && debug == 1) printf("Partition Size too low\n");
     attempts = 0;
-    if (debug == 1) printf("Resizing Map");
     do {
       // Creates map
-      if (debug) printf(".");
-      if ((*map) != NULL) (void)destroy_map((*map), map_size);    // Remove map if first run thru
-      (*n_partitions) = nextCube(*n_partitions);                  // Next map size
-      (*map) = createMap(head, cube, (*n_partitions), &mapStatus);
+      if (mapStatus == 1) {
+        (void)destroy_map(map, (*n_partitions));        // Remove map if insertion failure
+        (*n_partitions) = nextCube(*n_partitions);      // Resize partitions for new map
+      }
+      // Creates new map or processes map from previous iteration
+      map = createMap(map, head, cube, (*n_partitions), &mapStatus);
       attempts++;
 
       // If gridIndex fails mapStatus(2)
       if (mapStatus == 2) {
         printf("\nError at %d partitions\n", (*n_partitions));
-        return 2;
+        return NULL;
       }
       
-    } while (mapStatus != 0 && attempts < ATTEMPT_CAP);
+    } while (mapStatus != 0 && attempts < (max_n - 1));
 
     // Processes statuses and attempt failure
-    if (debug == 1) printf("\n");
-    if (attempts == ATTEMPT_CAP) {
+    if (attempts == max_n) {
       fprintf(stderr, "Failure to create valid map with %d partitions after %d attempts\n",
               *n_partitions, attempts);
-      return 1;   // Map failure
+      return NULL;   // Map failure
     } else if (mapStatus == 2) {
-      return 1;   // Memory Failure
-    } else if (attempts > 10) {
-      *large_partition = 1;
+      return NULL;   // Memory Failure
     }
   }
 
-  if (debug) printf("Map Created with %d partitions in %d attempts.\n", *n_partitions, attempts);
+  (*n_maps) = attempts;                                                   // Set the number of maps it took to simulate iteration
+  return map;
+}
 
-  // Map loop
-  for (i = 0; i < map_size; i++) {
-    // Iterates through map; compares two particles
-    curr = (*map)[i];
+Map **
+collisionCall(Map *map[], const Cube cube, Object *head, 
+              int *n_partitions, int iter, int max_n, int *n_maps,
+              instantiateMapFunc __initMap, int *collisionStatus)
+{
+  int i, j = 0, k = 0, p, q; 
+  // Current node in map and objects to compare
+  Map *curr = NULL;
+  double relative_mag[6], compare_radii[3] = {0, 0, 0};
+  Vector3 relative_pos;
+  Object *particles[4] = {NULL, NULL, NULL, NULL};
+
+  map = __initMap(map, cube, head, n_partitions, iter, max_n, n_maps);
+
+  if (map == NULL) {
+    *collisionStatus = 1;
+    return NULL;       // System Failure
+  }
+
+  // Collision Detection Loop
+  //printf("n_partitions: %d\n", (*n_partitions));
+  for (i = 0; i < (*n_partitions); i++) {\
     
-    if (curr != NULL && (curr->next) != NULL) {   // 2 particles
-      // Sets particles
-      a = curr->object;
-      b = (curr->next)->object;
-      if (debug) printf("Particles %s and %s have a potential collision.\n", a->id, b->id);
+    // Initialize to zero:
+    for (p = 0; p < 4; p++) {
+      particles[p] = NULL;
+    }
+    for (p = 0; p < 3; p++) {
+      compare_radii[p] = 0;
+    }
+    for (p = 0; p < 6; p++) {    
+      relative_mag[p] = 0;
+    }
 
-      // Checks collision
-      if (is_Colliding(a, b)) {    
-        (void)handleCollision(a, b);  // Edits velocity of a and b to diverge from each other
-      } 
-      
-      // Checks if any wall flag is non-zero (hitting wall in some way)
-      if (is_Wall(curr)) {  
-        if (debug) printf("%s hit a wall\n", a->id);
-        (void)handleWall(a, curr->wall);
-      } else if (is_Wall(curr->next)) {
-        if (debug) printf("%s hit a wall\n", b->id);
-        (void)handleWall(b, (curr->next)->wall);
+    // If current object or map doesn't exist skip past
+    if (map[i]->object == NULL || map[i] == NULL) {
+      continue;
+    }
+
+    // Set particles array
+    j = 0;
+    while (curr != NULL) {
+      particles[j++] = curr->object;
+      curr = curr->next;
+    }
+
+    // Find all relative magnitudes
+    q = 0;
+    for (j = 0; j < 3 && particles[j] != NULL; j++) {
+      compare_radii[j] = particles[j]->radius;
+      for (k = j + 1; k < 4 && particles[k] != NULL; k++) {
+        relative_pos = subtractVectors(particles[j]->position, particles[k]->position);
+        relative_mag[q++] = magnitude(relative_pos) - particles[k]->radius;
+      }
+    }
+
+    // If there exists a particle in this position, check if it needs wall handling
+    j = k = 0;
+    while (particles[j] != NULL && j < 4) {
+      (void)handleWall(particles[j]);
+      j++;
+    }
+
+    // Compares the src particle versus the colliding particle
+    for (j = 0; j < 3 && particles[j] != NULL; j++) {
+      for (k = j + 1; k < 4 && particles[k] != NULL; k++) {
+        q = j * 3 + k - ((j + 1) * (j + 2)) / 2;                // Relative_mag index in terms of j and k 
+        if (relative_mag[q] < compare_radii[j]) {
+          (void)handleCollision(particles[j], particles[k]);    // handle call
+        }
       }
     }
   }
 
-  return 0;   // Successful Collision Call
+  return map;   // Successful Collision Call
 }
 
 // Returns the next perfect cube of an integer
- int
+int
 nextCube(int prev_n_cb)
 {
   int n = cbrt(prev_n_cb) + 1;
   return n * n * n; 
 }
 
-// Uses size of objects to determine any possible collision
- int
-is_Colliding(Object *a, Object *b)
-{
-  Vector3 relative_position = subtractVectors(a->position, b->position);
-  double gap = magnitude(relative_position);
-
-  if (gap - (a->radius + b->radius) < tol) {
-    return 1;
-  }
-  return 0;
-}
-
- int
-is_Wall(Map *curr)
-{
-  // If any wall is flagged as intersected return true
-  if (curr->wall.x != 0) return 1;
-  if (curr->wall.y != 0) return 1;
-  if (curr->wall.z != 0) return 1;
-  
-  return 0;   // else return false 
-}
 
 // Simple velocity correction for two colliding particles
 void
 handleCollision(Object *a, Object *b)
 {
+  if (a == NULL || b == NULL) return;
   const double restitution = 0.95;    // Inelastic
   double normal_speed, impulse_scalar; 
   Vector3 normal, relative_velocity, impulse;
@@ -142,44 +161,34 @@ handleCollision(Object *a, Object *b)
   b->velocity = subtractVectors(b->velocity, scaleVector(impulse, (1.0 / b->mass)));
 }
 
-// Simple correct for particle colliding with wall
- void
-handleWall(Object *a, Short3 wall)
+static int
+sign(double val)
 {
-  const double restitution = 0.95;
-  if (wall.x != 0) {
-    a->velocity.x = -a->velocity.x * restitution;
-  } else if (wall.y != 0) {
-    a->velocity.y = -a->velocity.y * restitution;
-  } else if (wall.z != 0) {
-    a->velocity.z = -a->velocity.z * restitution;
+  if (val < 0) {
+    return -1;
+  } else if (val > 0) {
+    return 1;
   }
+  return 0;
 }
 
-// Special function to print objects at time of collisionStatus(2) 
-char *
-print_ObjectError(Object *head, const int side_len, const int n_axis, const int map_size)
+// Simple correct for particle colliding with wall
+void
+handleWall(Object *a)
 {
-  Object *curr = head;
-  Short3 indices;
-  int gridIndex = 0;
-  char *affected_id = (char*)safe_malloc(5 * sizeof(char));
-  printf("collisionStatus(2):\n  Current Partition Size: %d\n", map_size);
-  while (curr != NULL) {
-    indices = (Short3){(short)(curr->position.x / (side_len / n_axis)), 
-                              (short)(curr->position.y / (side_len / n_axis)), 
-                              (short)(curr->position.z / (side_len / n_axis))};
-    gridIndex = gridIndexCalc(indices, n_axis); 
-    if (gridIndex >= map_size) {
-      strcpy_s(affected_id, 5 * sizeof(char), curr->id);
-      printf("Corrupt>> Particle %s:\n", curr->id);
-    } else {
-      printf("Particle %s:\n", curr->id);
-    }
-    printf("  index (%hd, %hd, %hd)\n", indices.x, indices.y, indices.z);
-    printf("  x: %lf\n  y: %lf\n  z: %lf\n", curr->position.x, curr->position.y, curr->position.z);
-    curr = curr->next;
+  if (a == NULL) return;
+  Short3 wall = a->wall;
+  const double restitution = 0.95;
+ 
+  if (wall.x != 0 && (sign(a->velocity.x) == sign(wall.x))) {
+    a->velocity.x = -a->velocity.x * restitution;
   }
 
-  return affected_id;     // Returns the id of the corrupt particle
+  if (wall.y != 0 && (sign(a->velocity.y) == sign(wall.y))) {
+    a->velocity.y = -a->velocity.y * restitution;
+  }
+
+  if (wall.z != 0 && (sign(a->velocity.z) == sign(wall.z))) {
+    a->velocity.z = -a->velocity.z * restitution;
+  }
 }

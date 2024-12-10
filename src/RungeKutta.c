@@ -47,6 +47,7 @@ addObject(Object *object)
   new->id = random_id();
   new->mass = 1.0;
   new->radius = 0.5; 
+  new->wall = (Short3){0, 0, 0};
   // Random position and velocity governed by system forces 
   new->position = randomVector();
   new->velocity = randomVector();
@@ -62,6 +63,31 @@ addObject(Object *object)
     object->next = new;
     return new;
   }
+}
+
+// Appends new object to end of llist
+void
+appendObject(Object *head)
+{
+  Object *curr = head;
+  // Advance to end of list
+  while (curr->next != NULL) {
+    curr = curr->next;
+  }
+  curr = addObject(curr);       // Append new object to end
+}
+
+// Deletes the last object in llist
+void
+deleteObject(Object *head, int *particle_ct)
+{
+  Object *curr = head;
+  // Advance to end
+  while (curr->next != NULL) {
+    curr = curr->next;
+  }
+  (void)destroy_objects(curr);       // Call destroy function with the last object as the 'head'
+  (*particle_ct)--;
 }
 
 // Updates position for each object in list

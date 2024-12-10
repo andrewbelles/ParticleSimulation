@@ -12,6 +12,26 @@ safe_malloc(size_t size)
   return mem;
 }
 
+// Returns true if the value is a perfect cube
+int
+is_Cubic(int num)
+{
+  int root = round(cbrt(num));
+  return num == root * root * root;
+}
+
+// Returns the correct number of partitions that will ensure partions just slightly greater than the diameter
+int
+mapSize(double max_radius, double cube_size)
+{
+  int n_partitions = (int)(cube_size / (2.0 * max_radius));
+  while (!is_Cubic(n_partitions)) {
+    n_partitions++;                                       // Increase till perfect cube
+  }
+  return n_partitions;      // Return number of partitions
+}
+
+
 // Boolean prime check
 int
 is_prime(const int num)

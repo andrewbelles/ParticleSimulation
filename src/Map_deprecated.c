@@ -1,38 +1,22 @@
-#include "../include/Map.h"
+#include "../include/Map_deprecated.h"
 
 // Creates a hashmap of n_partitions
 Map **
-createMap(Map *map[], Object *head, const Cube cube, int n_partitions, int *mapStatus)
+createMap_deprecated(Object *head, const Cube cube, int n_partitions, int *mapStatus)
 {
   // Creates grid boundaries
   int n_axis = (int)cbrt(n_partitions), size = n_partitions, i, status = 0;
+  Map **map = (Map**)safe_malloc(size * sizeof(Map*));
   Object *curr = head;
-  Grid *grid = NULL;
-  Map *new;
-  grid = createGrid(cube.size, size, cube.origin, n_axis);
-  if (grid == NULL) {
-    (*mapStatus) = 2;
-    return NULL;
-  }
+  Grid *grid = createGrid(cube.size, size, cube.origin, n_axis);
 
-  // If map is NULL then create memory for the map
-  if (map == NULL) {
-    map = (Map**)safe_malloc(size * sizeof(Map*));
-  }
-
-  // Reset buckets of map for reinsertion
   for (i = 0; i < size; i++) {
-    new = (Map*)malloc(sizeof(Map));
-    new->object = NULL;
-    new->next = NULL;
-    new->count = 0;
-    map[i] = new;
+    map[i] = NULL;
   }
-  
-  // Object Input to map
-  i = 0;
+
+  // Object 
   while (curr != NULL) {
-    status = objProcess(map, grid, curr, cube.size, n_axis);
+    status = objProcessHelper(map, grid, curr, cube.size, n_axis);
     if (status == 1 && !OVERRIDE) {   // Early exit due to insertion error
       (*mapStatus) = 1;
       (void)destroy_map(map, size);
@@ -49,7 +33,6 @@ createMap(Map *map[], Object *head, const Cube cube, int n_partitions, int *mapS
 
   *mapStatus = 0;
   free(grid);
-  if (map == NULL) printf("null map!");
   return map;
 }
 
@@ -88,7 +71,7 @@ createGrid(const double side_length, const int n_partitions, const Vector3 cube_
 
 // Processes each individual particle passed through and places them in the map
 int
-objProcess(Map *map[], const Grid grid[], Object *obj,
+objProcessHelper(Map *map[], const Grid grid[], Object *obj,
                  double cubesize, int n_axis)
 {
   Vector3 tmp;
@@ -140,14 +123,15 @@ insertNode(Map *map[], Object *obj, int gridIndex)
   // Set object to current
   new->object = obj; 
   new->next = NULL;
+  new->wall = (Short3){0, 0, 0};
   new->count = 1;
   
   // If this partition is empty set first node to new node
-  if (map[gridIndex]->object == NULL) {
+  if (map[gridIndex] == NULL) {
     map[gridIndex] = new;
   // If not empty advance
   } else {
-    if (curr->count >= 5 && !OVERRIDE) {    // If bucket exceeds acceptable number of particles
+    if (curr->count >= 2 && !OVERRIDE) {    // If bucket exceeds acceptable number of particles
       free(new);
       return 1;
     }
@@ -215,7 +199,7 @@ overlapHelper(Map *map[], const Grid grid[], Object *a, const Short3 indices,
   // Variable Initialization
   int intersect, status = 0, i;
   short *indices_array = arrayFromIndices(indices);     // Short3 indices to array
-  short wall[3] = {a->wall.x, a->wall.y, a->wall.z};
+  short wall[3] = {map[gridIndex]->wall.x, map[gridIndex]->wall.y, map[gridIndex]->wall.z};
   short *indices_cpy = indices_array;                   // Copied
   short direction[3] = {0, 0, 0};                       // Initialize to 0 to start and modify if intersecting
 
@@ -272,7 +256,7 @@ overlapHelper(Map *map[], const Grid grid[], Object *a, const Short3 indices,
   }
 
   // Modify references
-  a->wall = indicesFromArray(wall);
+  map[gridIndex]->wall = indicesFromArray(wall);
   (*dir) = indicesFromArray(direction);
   // If any index is outside the valid range. 
   if (((*dir).x > 1 || (*dir).x < -1) || ((*dir).y > 1 || (*dir).y < -1) || ((*dir).z > 1 || (*dir).z < -1)) {
@@ -445,7 +429,7 @@ print_map(Map* map[], const int size)
     printf("Bucket %d:\n", i + 1);
     while (curr != NULL) {
       if (curr->object != NULL) {  // Check if the current map node has an object
-        printf("  %s:\n", curr->object->id);
+        printf("  %s - %c:\n", curr->object->id, curr->type);
         printf("    x: %lf\n", curr->object->position.x);
         printf("    y: %lf\n", curr->object->position.y);
         printf("    z: %lf\n", curr->object->position.z);
