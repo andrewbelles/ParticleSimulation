@@ -4,30 +4,32 @@
 #include <float.h>
 #include <windows.h>
 #include "../include/Geometry.h"
-#include "../include/RungeKutta.h"
-#include "../include/Map.h"
-#include "../include/Collision.h"
+#include "../include/ImprovedCollision.h"
 
-// Map is passed by reference and is updated in updateLoop as called
+/**** Main call in front-end to update physics of system. Substepping enabled ****/
 int
-updateCall(Map **map[], const Cube cube, Object **head, int iter, int *n_partitions)
+updateCall(const Cube cube, Object objects[], 
+           const int particle_ct, const int axis_ct, const double dt, const int sub_steps)
 {
-  int max_n=0, n_maps=0, collisionStatus=0;
-  max_n = mapSize((*head)->radius, cube.size);
-  (*map) = collisionCall((*map), cube, (*head), n_partitions, iter, max_n,
-                      &n_maps, instantiateMap, &collisionStatus);
-  (void)n_maps;                           // n_maps is used for benchmarking (can be cast to void)
-  if (collisionStatus != 0) {
-    // Free memory gracefully
-    (void)destroy_map((*map), (*n_partitions));
-    (void)destroy_objects(*head);
-    printf("Failure!\n");
-    return 0;                            // Return Exit Code for Abort
+  double sub_dt = (double)(dt / sub_steps);
+
+  for (int i = 0; i < sub_steps; i++) {  
+    collisionCall(cube, objects, axis_ct * axis_ct * axis_ct, particle_ct, axis_ct);
+    updateObjects(objects, particle_ct, sub_dt);
   }
-  (void)updateObjects((*head));
 
   return 1;                               // Successful time-step update
 } 
+
+Vector3 *
+read_positions(Object objects[], int size)
+{
+  Vector3 *positions = (Vector3*)safe_malloc(size * sizeof(Vector3));
+  for (int i = 0; i < size; i++) {
+    positions[i] = objects[i].position;
+  }
+  return positions;
+}
 
 // Python function to free memory created in C
 void free_memory(void *ptr) {

@@ -1,8 +1,9 @@
 {
   "ExpandedNodes": [
     "",
+    "\\python_integration",
     "\\src"
   ],
-  "SelectedNode": "\\makefile",
+  "SelectedNode": "\\python_integration\\particlesim.py",
   "PreviewInSolutionExplorer": false
 }

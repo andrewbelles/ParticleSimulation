@@ -7,7 +7,7 @@
 #include <string.h>
 #include "definitions.h"
 #include "Geometry.h"
-#include "RungeKutta.h"
+#include "Physics.h"
 
 // Grid definition 
 typedef struct {

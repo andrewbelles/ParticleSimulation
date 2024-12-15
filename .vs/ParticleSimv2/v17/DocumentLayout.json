@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\main.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.py||{3B902123-F8A7-4915-9F01-361F908088D0}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:python_integration\\particlesim.py||{3B902123-F8A7-4915-9F01-361F908088D0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Collision.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Collision.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\ImprovedCollision.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\ImprovedCollision.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Map.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:src\\Map.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:python_integration\\particlesim.c||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,45 +22,45 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Map.c",
-              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Map.c",
-              "RelativeDocumentMoniker": "src\\Map.c",
-              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Map.c",
-              "RelativeToolTip": "src\\Map.c",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-12-05T19:51:59.911Z",
+              "DocumentIndex": 0,
+              "Title": "particlesim.py",
+              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.py",
+              "RelativeDocumentMoniker": "python_integration\\particlesim.py",
+              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.py",
+              "RelativeToolTip": "python_integration\\particlesim.py",
+              "ViewState": "AQIAAJAAAAAAAAAAAAAAABMAAAACAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2024-12-12T18:02:43.006Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Collision.c",
-              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Collision.c",
-              "RelativeDocumentMoniker": "src\\Collision.c",
-              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\Collision.c",
-              "RelativeToolTip": "src\\Collision.c",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAACEAAAAbAAAA",
+              "Title": "ImprovedCollision.c",
+              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\ImprovedCollision.c",
+              "RelativeDocumentMoniker": "src\\ImprovedCollision.c",
+              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\ImprovedCollision.c",
+              "RelativeToolTip": "src\\ImprovedCollision.c",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAUAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-12-05T19:51:58.301Z",
+              "WhenOpened": "2024-12-12T18:02:23.148Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "main.c",
-              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\main.c",
-              "RelativeDocumentMoniker": "src\\main.c",
-              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\src\\main.c",
-              "RelativeToolTip": "src\\main.c",
-              "ViewState": "AQIAAAkAAAAAAAAAAAAAAD8AAAAAAAAA",
+              "DocumentIndex": 2,
+              "Title": "particlesim.c",
+              "DocumentMoniker": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.c",
+              "RelativeDocumentMoniker": "python_integration\\particlesim.c",
+              "ToolTip": "C:\\VSCODE_C\\Projects\\ParticleSimv2\\python_integration\\particlesim.c",
+              "RelativeToolTip": "python_integration\\particlesim.c",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000423|",
-              "WhenOpened": "2024-12-05T19:51:52.881Z",
+              "WhenOpened": "2024-12-12T18:02:21.057Z",
               "EditorCaption": ""
             }
           ]

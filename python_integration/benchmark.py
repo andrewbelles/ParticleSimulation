@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-
 # Declared shared library to pull c functions from 
 c = ctypes.CDLL('./python_integration/benchmark.so')
 

@@ -112,7 +112,7 @@ collisionCall(Map *map[], const Cube cube, Object *head,
     for (j = 0; j < 3 && particles[j] != NULL; j++) {
       for (k = j + 1; k < 4 && particles[k] != NULL; k++) {
         q = j * 3 + k - ((j + 1) * (j + 2)) / 2;                // Relative_mag index in terms of j and k 
-        if (relative_mag[q] < compare_radii[j]) {
+        if (relative_mag[q] < compare_radii[j] + tol) {
           (void)handleCollision(particles[j], particles[k]);    // handle call
         }
       }

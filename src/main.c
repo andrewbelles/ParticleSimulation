@@ -7,7 +7,7 @@
 #include <time.h>
 #include <float.h>
 #include "../include/Geometry.h"
-#include "../include/RungeKutta.h"
+#include "../include/Physics.h"
 #include "../include/Map.h"
 #include "../include/Collision.h"
 
@@ -61,7 +61,7 @@ main(int argc, char *argv[])
   print_positions(head);
 
   // Benchmark loop.
-  for (t = 0; t < BENCH_CT; t++) { 
+  for (t = 0; t < 25; t++) { 
     for (i = 0; i < iter_ct; i++) {
       n_partitions = 8;
       map = collisionCall(map, cube, head, &n_partitions, i, max_n, &n_maps, instantiateMap, &collisionStatus);

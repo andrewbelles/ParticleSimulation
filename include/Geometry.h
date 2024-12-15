@@ -9,8 +9,8 @@
 
 // Vector Defns
 typedef struct {
-  short x, y, z;
-} Short3;
+  int x, y, z;
+} Int3;
 
 typedef struct {
  double x, y;
@@ -34,14 +34,6 @@ typedef struct {
 void*
 safe_malloc(size_t size);
 
-// boolean is or isn't a perfect cube
-int
-is_Cubic(int num);
-
-// Finds the maximum size of a partition to ensure doesn't 'constrict' particle
-int
-mapSize(double max_radius, double cube_size);
-
 // boolean is or isn't prime
 int
 is_prime(const int num);
@@ -53,6 +45,9 @@ Q_rsqrt(float number);
 // Normalizes vectors using q3 
 Vector3
 Q_normalize(Vector3 a);
+
+Vector3
+normalize(Vector3 a);
 
 // Returns a random value between 2.5 and 5
 double

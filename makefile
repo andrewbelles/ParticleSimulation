@@ -1,19 +1,17 @@
 CC = gcc
 
-CFLAGS = -Iinclude -Wall -Wextra -Wpedantic -std=c99
+CFLAGS = -Iinclude/ -Wall -Wextra -Wpedantic -std=c99
 
-SRC = src/Collision.c src/Map.c src/Geometry.c src/RungeKutta.c src/main.c
+SRC = src/Collision.c src/Map.c src/Geometry.c src/Physics.c src/main.c
 
 OBJ = $(SRC:.c=.o)
 
 EXEC = particlesim
 
-BENCH_SRC = python_integration/benchmark_funcs.c src/Geometry.c src/RungeKutta.c src/Map.c src/Collision.c
-
-RENDER_SRC = python_integration/particlesim.c src/Geometry.c src/RungeKutta.c src/Map.c src/Collision.c
+BENCH_SRC = python_integration/benchmark_funcs.c src/Geometry.c src/Physics.c src/Map.c src/Collision.c
+RENDER_SRC = python_integration/particlesim.c src/ImprovedCollision.c src/Geometry.c
 
 BENCH_SO = python_integration/benchmark.so
-
 RENDER_SO = python_integration/fast_collisionMath.so
 
 all: $(EXEC)
